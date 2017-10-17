@@ -21,13 +21,14 @@ public class RegistroLogin extends AppCompatActivity implements View.OnClickList
     EditText contrasenaVar;
     Button btn_registrar;
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_login);
 //Editview
         NombreEtvar = (EditText) findViewById(R.id.NombreEt);
         ApellidoEtvar = (EditText) findViewById(R.id.ApellidoEt);
         EmailEtvar = (EditText) findViewById(R.id.CorreoEt);
-        contrasenaVar = (EditText) findViewById(R.id.TV_PasswordEt);
+        contrasenaVar = (EditText) findViewById(R.id.ContrasenaET);
         //Button
 
         btn_registrar = (Button) findViewById(R.id.btn_registrarLoginActivirty);
@@ -35,6 +36,8 @@ public class RegistroLogin extends AppCompatActivity implements View.OnClickList
 //Evento
 
         btn_registrar.setOnClickListener(this);
+
+
     }
 
     @Override
@@ -43,13 +46,15 @@ public class RegistroLogin extends AppCompatActivity implements View.OnClickList
         final String apellido=ApellidoEtvar.getText().toString();
         final String correo=EmailEtvar.getText().toString();
         final String contrasena=contrasenaVar.getText().toString();
+        final String contrasena2=contrasenaVar.getText().toString();
+
         Response.Listener<String> respoListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try {
-                    //JSONObject jsonResponse = new JSONObject(response);
-                   JSONObject  jsonResponse = new JSONObject(response.substring(3));
+                    JSONObject jsonResponse = new JSONObject(response);
+                  //JSONObject  jsonResponse = new JSONObject(convertStandardJSONString(response).substring(3));
                      boolean success = jsonResponse.getBoolean("success");
 
                     if(success){
@@ -70,14 +75,30 @@ public class RegistroLogin extends AppCompatActivity implements View.OnClickList
                     e.printStackTrace();
                 }
 
+
+
             }
         };
+
+
+
+
+
 
         RegisterRequest registerRequest = new RegisterRequest(nombre,apellido,correo,contrasena,respoListener);
         RequestQueue queue = Volley.newRequestQueue(RegistroLogin.this);
         queue.add(registerRequest);
 
 
-
     }
+
+
+    public static String convertStandardJSONString(String data_json) {
+        data_json = data_json.replaceAll("\\\\r\\\\n", "");
+        data_json = data_json.replace("\"{", "{");
+        data_json = data_json.replace("}\",", "},");
+        data_json = data_json.replace("}\"", "}");
+        return data_json;
+    }
+
 }

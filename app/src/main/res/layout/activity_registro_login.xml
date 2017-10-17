@@ -39,24 +39,33 @@
             android:ems="10"
             android:hint="Apellido"
             android:inputType="textPersonName" />
+
         <EditText
             android:id="@+id/CorreoEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Correo"
+            android:inputType="text" />
+
+        <!--<EditText-->
+        <!--android:id="@+id"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="Password"-->
+        <!--android:inputType="textPassword" />-->
+        <EditText
+            android:id="@+id/ContrasenaET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Contraseña"
             android:inputType="text"/>
-      <EditText
-          android:id="@+id/TV_PasswordEt"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:hint="Password"
-          android:inputType="textPassword"/>
+
         <Button
             android:id="@+id/btn_registrarLoginActivirty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Registrar"
             android:layout_gravity="center"
+            android:text="Registrar"
 
             />
     </LinearLayout>
