@@ -4,17 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hynit.eida.Usuario"
     android:orientation="vertical"
+    tools:context="hynit.eida.Usuario"
     >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="Bienvenido"
         android:textSize="25sp"
-        android:layout_gravity="center"
 
         />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre"
+            android:textSize="22sp" />
+
+
+        <TextView
+            android:id="@+id/TextV_Nombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="22sp" />
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,13 +46,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nombre"
+            android:text="apellido"
             android:textSize="22sp"
             />
 
         <TextView
-            android:id="@+id/TextV_Nombre"
-            android:layout_width="match_parent"
+            android:id="@+id/TextV_Apellido"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
             android:textSize="22sp"
@@ -47,13 +69,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Usuario"
+            android:text="correo"
             android:textSize="22sp"
             />
 
         <TextView
-            android:id="@+id/TextV_Usuario"
-            android:layout_width="match_parent"
+            android:id="@+id/TextV_Correo"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
             android:textSize="22sp"
@@ -75,31 +97,8 @@
             />
 
         <TextView
-            android:id="@+id/TextV_Password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="22sp"
-            />
-
-
-
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Edad"
-            android:textSize="22sp"
-            />
-
-        <TextView
-            android:id="@+id/TextV_Edad"
-            android:layout_width="match_parent"
+            android:id="@+id/TextV_Contrasena"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
             android:textSize="22sp"

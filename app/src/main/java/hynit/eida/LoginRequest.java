@@ -19,7 +19,7 @@ public class LoginRequest extends StringRequest {
     public LoginRequest(String correo,String contrasena, Response.Listener<String> listener){
         super(Request.Method.POST,LOGIN_REQUEST_URL,listener,null);
         params= new HashMap<>();
-        params.put("Correo",correo);
+        params.put("correo", correo);
         params.put("contrasena",contrasena);
 
 
