@@ -3,23 +3,21 @@ package hynit.eida;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
-import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -98,8 +96,51 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+
+                final String correo = mEmailView.getText().toString();
+                final String contrasena = mPasswordView.getText().toString();
+
+                Response.Listener<String> responseListener = new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonResponser = new JSONObject(response);
+                            boolean success = jsonResponser.getBoolean("success");
+                            if (success) {
+                                String nombre = jsonResponser.getString("nombre");
+                                String apellido = jsonResponser.getString("apellido");
+                                String correo = jsonResponser.getString("correo");
+                                String contrasena = jsonResponser.getString("contrasena");
+
+                                Intent intent = new Intent(LoginActivity.this, Usuario.class);
+                                intent.putExtra("nombre", nombre);
+                                intent.putExtra("apellido", apellido);
+                                intent.putExtra("correo", correo);
+                                intent.putExtra("contrasena", contrasena);
+
+                                LoginActivity.this.startActivity(intent);
+                            } else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                                builder.setMessage("Error en el Login")
+                                        .setNegativeButton("Retry", null)
+                                        .create().show();
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                LoginRequest loginRequest = new LoginRequest(correo, contrasena, responseListener);
+                RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
+                queue.add(loginRequest);
+
+
             }
+
+
         });
 
         mLoginFormView = findViewById(R.id.login_form);
@@ -164,6 +205,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
+
+
+    private void Logeo() {
+
+    }
 
     private void attemptLogin() {
         if (mAuthTask != null) {
@@ -318,47 +364,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
-        Response.Listener<String> responseListener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonResponser = new JSONObject(response);
-                    boolean success = jsonResponser.getBoolean("success");
-                    if (success) {
-                        String nombre = jsonResponser.getString("nombre");
-                        String apellido = jsonResponser.getString("apellido");
-                        String correo = jsonResponser.getString("correo");
-                        String contrasena = jsonResponser.getString("contrasena");
-
-                        Intent intent = new Intent(LoginActivity.this, Usuario.class);
-                        intent.putExtra("nombre", nombre);
-                        intent.putExtra("apellido", apellido);
-                        intent.putExtra("correo", mEmail);
-                        intent.putExtra("contrasena", mPassword);
-
-                        LoginActivity.this.startActivity(intent);
-
-
-                    } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                        builder.setMessage("Error en el Login")
-                                .setNegativeButton("Retry", null)
-                                .create().show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        LoginRequest loginRequest = new LoginRequest(mEmail, mPassword, responseListener);
-        RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-        queue.add(LoginRequest)
 
         UserLoginTask(String email, String password) {
             mEmail = email;

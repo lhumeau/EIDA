@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="hynit.eida.Usuario"
-    >
+    android:weightSum="1"
+    tools:context="hynit.eida.Usuario">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,15 +22,15 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nombre"
+            android:text="Nombre: "
             android:textSize="22sp" />
 
 
         <TextView
             android:id="@+id/TextV_Nombre"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
             android:textSize="22sp" />
@@ -41,23 +41,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="apellido"
-            android:textSize="22sp"
-            />
+        android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apellido :"
+            android:textSize="22sp" />
         <TextView
             android:id="@+id/TextV_Apellido"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:text=""
-            android:textSize="22sp"
-            />
-
+            android:textSize="22sp" />
 
 
     </LinearLayout>
@@ -66,12 +63,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
+
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="correo"
-            android:textSize="22sp"
-            />
+            android:text="Correo: "
+            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/TextV_Correo"
@@ -84,29 +82,23 @@
 
 
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-        <TextView
-            android:layout_width="match_parent"
+
+
+    <TextView
+        android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Contraseña"
-            android:textSize="22sp"
-            />
+        android:text="Contraseña: "
+            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/TextV_Contrasena"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:textSize="22sp"
-            />
+            android:textSize="22sp" />
 
 
 
-    </LinearLayout>
 
 
 </LinearLayout>
