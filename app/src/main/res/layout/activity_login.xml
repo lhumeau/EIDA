@@ -2,14 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="hynit.eida.LoginActivity"
-    android:background="#ffffff">
+    tools:context="hynit.eida.LoginActivity">
     <!-- Imagen del Login-->
 
     <ImageView
@@ -85,10 +85,22 @@
                 android:id="@+id/btn_registrar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Registrar cuenta "
-                android:textSize="25sp"
+                android:gravity="center"
                 android:paddingTop="15dp"
-                android:gravity="center"/>
+                android:text="Registrar cuenta "
+                android:textSize="25sp" />
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/btn_login_facebook"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="Entrar con Facebook"
+
+                />
 
         </LinearLayout>
     </ScrollView>
