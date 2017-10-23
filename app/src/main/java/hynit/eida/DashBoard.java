@@ -80,8 +80,20 @@ public class DashBoard extends AppCompatActivity {
 
 
     public void logout(View view) {
-        LoginManager.getInstance().logOut();
-        goLoginActivity();
+
+        if (login.getvaliSuccess() == true) {
+            goLoginActivity();
+
+        } else
+
+        {
+
+            if (AccessToken.getCurrentAccessToken() == null) {
+                LoginManager.getInstance().logOut();
+                goLoginActivity();
+            }
+
+        }
     }
 
 
