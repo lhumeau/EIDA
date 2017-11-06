@@ -3,22 +3,21 @@ package hynit.eida;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,6 +28,22 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,16 +56,10 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
 
-        //Rescatamos todos los botones
-
-    TextView BtnRegistrar;
-
-
     /**
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
-
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
@@ -58,11 +67,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
+    //Variables publica para uso en otros activities
+    // Variable de clase para sacar valor que tiene actualmente la variable y luego pasarla a
+    //           a Dashboard
+    public static boolean validsuccess;
+    TextView BtnRegistrar;
+    //Rescatamos todos los botones
+    private LoginButton loginButton;
+    private CallbackManager callbackManager;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
-
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -73,6 +89,49 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //Agregando facebook para registro de actividades como por ejemplo uso de la app .ettc
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+
+//        hay que validar esta logica
+        if (AccessToken.getCurrentAccessToken() != null) {
+            //Ir a DashBoard si tiene el token de facobook activo
+            goDashBoard();
+        }
+
+        //Facebook registro del callback
+        callbackManager = CallbackManager.Factory.create();
+        loginButton = (LoginButton) findViewById(R.id.btn_login_facebook);
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            ///aqui llegan las acciones del login de facebook
+            public void onSuccess(LoginResult loginResult) {
+                //metodo valido
+                goDashBoard();
+            }
+
+
+            @Override
+            public void onCancel() {
+                //Log out
+                Toast.makeText(getApplicationContext(), R.string.fbCancel, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                //Error de autenticacion
+                Toast.makeText(getApplicationContext(), R.string.fbError, Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        //----- Hasta aqui
+
+        //Donde llegan las acciones y tenemos que dirigiar al call manager es el metodo onActivityesult
+
+
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -93,8 +152,53 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+
+                final String correo = mEmailView.getText().toString();
+                final String contrasena = mPasswordView.getText().toString();
+
+                Response.Listener<String> responseListener = new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonResponser = new JSONObject(response);
+                            boolean success = jsonResponser.getBoolean("success");
+                            if (success) {
+                                setvalidsuccess(true);
+                                goDashBoard();
+//                                String nombre = jsonResponser.getString("nombre");
+//                                String apellido = jsonResponser.getString("apellido");
+//                                String correo = jsonResponser.getString("correo");
+//                                String contrasena = jsonResponser.getString("contrasena");
+//
+//                                Intent intent = new Intent(LoginActivity.this, Usuario.class);
+//                                intent.putExtra("nombre", nombre);
+//                                intent.putExtra("apellido", apellido);
+//                                intent.putExtra("correo", correo);
+//                                intent.putExtra("contrasena", contrasena);
+
+//                                LoginActivity.this.startActivity(intent);
+                            } else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                                builder.setMessage("Error en el Login")
+                                        .setNegativeButton("Retry", null)
+                                        .create().show();
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                LoginRequest loginRequest = new LoginRequest(correo, contrasena, responseListener);
+                RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
+                queue.add(loginRequest);
+
+
             }
+
+
         });
 
         mLoginFormView = findViewById(R.id.login_form);
@@ -108,6 +212,33 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         });
+    }
+
+//    private void goLoginScreen() {
+//        Intent intent = new Intent(this,LoginActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(intent);
+//
+//    }
+
+    private void goDashBoard() {
+
+        Intent intent = new Intent(this, DashBoard.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    //    private void goMainScreen() {
+//        Intent intent = new Intent(this,LoginActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(intent);
+//
+//
+//
+//    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void populateAutoComplete() {
@@ -153,12 +284,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
+
+
+    private void Logeo() {
+
+    }
+
     private void attemptLogin() {
         if (mAuthTask != null) {
             return;
@@ -208,6 +344,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
+
         return email.contains("@");
     }
 
@@ -295,6 +432,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    public void setvalidsuccess(boolean validsuccess) {
+        LoginActivity.validsuccess = validsuccess;
+
+    }
+
+    public boolean getvaliSuccess() {
+
+        return validsuccess;
+    }
+
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -362,6 +509,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
     }
+
+    // LoginRequest loginRequest = new LoginRequest()
+
 
 }
 

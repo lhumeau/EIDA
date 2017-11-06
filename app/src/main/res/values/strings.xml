@@ -13,4 +13,15 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <!--String para login de facebook-->
+    <string name="facebook_app_id">693614014174556</string>
+    <string name="fb_login_protocol_scheme">fb693614014174556</string>
+    <string name="fbLogin">Inicia Sesion con Facebook</string>
+    <string name="fbCancel">Operación Cancelada</string>
+    <string name="fbError">Hubo un Error con la credenciales.</string>
+    <string name="title_activity_dash_board">DashBoard</string>
+    <string name="title_home">INICIO</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
 </resources>
