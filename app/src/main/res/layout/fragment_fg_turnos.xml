@@ -1,0 +1,60 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    >
+
+    <RelativeLayout
+        android:id="@+id/Rltlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/btnTomarTurno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView3"
+            android:layout_centerHorizontal="true"
+            android:text="+" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/btnTomarTurno"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:padding="15dp"
+            android:text="Tomar Turno"
+            android:textAlignment="center"
+            android:textColor="@color/com_facebook_likeview_text_color"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtTurnosPendiente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnTomarTurno"
+            android:layout_marginBottom="15dp"
+            android:padding="15dp"
+            android:text="Turnos Pendientes"
+            android:textAlignment="center"
+            android:textSize="20dp"
+            android:textStyle="bold"
+
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtTurnosPendiente"
+            android:layout_centerInParent="true"
+            android:text="Ver" />
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

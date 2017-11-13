@@ -20,6 +20,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -38,6 +40,8 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -72,9 +76,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     //           a Dashboard
     public static boolean validsuccess;
     TextView BtnRegistrar;
+    CallbackManager callbackManager;
     //Rescatamos todos los botones
     private LoginButton loginButton;
-    private CallbackManager callbackManager;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -88,11 +92,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+
 
         //Agregando facebook para registro de actividades como por ejemplo uso de la app .ettc
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
+        facebookSDKInitialize();
+        setContentView(R.layout.activity_login);
+        LoginButton loginButton = (LoginButton) findViewById(R.id.btn_login_facebook);
+        loginButton.setReadPermissions("email");
+        getLoginDetails(loginButton);
 
 //        hay que validar esta logica
         if (AccessToken.getCurrentAccessToken() != null) {
@@ -102,13 +109,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         //Facebook registro del callback
         callbackManager = CallbackManager.Factory.create();
-        loginButton = (LoginButton) findViewById(R.id.btn_login_facebook);
+        //loginButton = (LoginButton) findViewById(R.id.btn_login_facebook);
+        loginButton.setReadPermissions("email");
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             ///aqui llegan las acciones del login de facebook
             public void onSuccess(LoginResult loginResult) {
                 //metodo valido
-                goDashBoard();
+                //goDashBoard(); Este metodo lleva al Activity DashBoard
+                getUserInfo(loginResult);
             }
 
 
@@ -220,12 +229,62 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //        startActivity(intent);
 //
 //    }
+protected void facebookSDKInitialize() {
+    FacebookSdk.sdkInitialize(getApplicationContext());
+    callbackManager = CallbackManager.Factory.create();
+}
 
+    /*
+    Register a callback function with LoginButton to respond to the login result.
+    On successful login,login result has new access token and  recently granted permissions.
+    */
+    protected void getLoginDetails(LoginButton login_button) {
+        // Callback registration
+        login_button.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult login_result) {
+                getUserInfo(login_result);
+            }
+
+            @Override
+            public void onCancel() {
+                // code for cancellation
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                //  code to handle error
+            }
+        });
+    }
     private void goDashBoard() {
 
-        Intent intent = new Intent(this, DashBoard.class);
+        Intent intent = new Intent(this, Peluquero.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    /*
+        To get the facebook user's own profile information via  creating a new request.
+        When the request is completed, a callback is called to handle the success condition.
+     */
+    protected void getUserInfo(LoginResult login_result) {
+        GraphRequest data_request = GraphRequest.newMeRequest(
+                login_result.getAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(
+                            JSONObject json_object,
+                            GraphResponse response) {
+                        Intent intent = new Intent(LoginActivity.this, Peluquero.class);
+                        intent.putExtra("jsondata", json_object.toString());
+                        startActivity(intent);
+                    }
+                });
+        Bundle permission_param = new Bundle();
+        permission_param.putString("fields", "id,name,email,picture.width(120).height(120)");
+        data_request.setParameters(permission_param);
+        data_request.executeAsync();
     }
 
     //    private void goMainScreen() {
@@ -240,6 +299,41 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        // getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
+    }
+
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {

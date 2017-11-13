@@ -38,17 +38,31 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".RegistroLogin" />
         <activity android:name=".Usuario" />
         <activity
             android:name=".DashBoard"
-            android:label="@string/title_activity_dash_board"></activity>
+            android:label="@string/title_activity_dash_board" />
+        <activity
+            android:name=".Clientes"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_c"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name=".Peluquero"
+            android:label="@string/title_activity_peluquero"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+
+        </activity>
     </application>
 
 </manifest>
